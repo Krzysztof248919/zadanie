@@ -13,6 +13,9 @@ void Group::random_init(const size_t &n_points) {
         return val*val;
     };
 
+    if ((points_scope.x*points_scope.y)/(sqr(point_radius_range)) < n_points)
+        throw domain_error("Not enough space for non-overlapping points");
+
     using namespace chrono;
     // counter makes sure, that generated output is pseudo random even if function is called two times between period of
     // time that is too short for high_resolution_clock
@@ -78,7 +81,10 @@ void Group::rescale(const Point &new_scope) {
 }
 
 bool Group::in_range(const Point &point, vector<Point>::iterator center) const {
-    return pow(point.x - center->x, 2) + pow(point.y - center->y, 2) <= pow(point_radius_range, 2);
+    auto sqr = [](auto val) {
+        return val*val;
+    };
+    return sqr(point.x - center->x) + sqr(point.y - center->y) <= sqr(point_radius_range);
 }
 
 vector<Point>::iterator Group::find_in_range(const Point &point) {

@@ -42,9 +42,5 @@ int main(int argc, char *argv[]) {
     n_pointsLabel->setText("Test");
     window.show();
 
-
-//    canvas.background = Qt::darkRed;
-
-
     return QApplication::exec();
 }

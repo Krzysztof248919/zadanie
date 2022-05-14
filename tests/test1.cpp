@@ -100,7 +100,7 @@ public:
                     CHECK_FALSE(failure);
                 }
                 SUBCASE("case 2") {
-                    Group group(10, {30, 30});
+                    Group group(3, {30, 30});
                     group.random_init();
                     bool failure(false);
                     for (auto &point: group.points) {
