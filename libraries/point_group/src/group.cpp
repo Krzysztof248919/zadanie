@@ -9,6 +9,10 @@
 #include <algorithm>
 
 void Group::random_init(const size_t &n_points) {
+    auto sqr = [](auto val) {
+        return val*val;
+    };
+
     using namespace chrono;
     // counter makes sure, that generated output is pseudo random even if function is called two times between period of
     // time that is too short for high_resolution_clock
@@ -25,11 +29,8 @@ void Group::random_init(const size_t &n_points) {
         Point new_point = Point({dist_x(generator), dist_y(generator)});
         bool collision = false;
         for (auto& point : points) {
-            auto dx = point.x-new_point.x;
-            auto dy = point.y-new_point.y;
-            auto distance = 2*point_radius_range;
-            // pow doesn't work here idk why
-            if (dx*dx+dy*dy<=distance*distance) {
+            // pow doesn't work here idk why ( even with #pragma optimize("", off) )
+            if (sqr(point.x - new_point.x) + sqr(point.y - new_point.y) <= sqr(2 * point_radius_range)) {
                 collision = true;
                 break;
             }
