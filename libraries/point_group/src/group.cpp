@@ -5,19 +5,38 @@
 #include "group.h"
 
 #include <random>
+#include <chrono>
 #include <algorithm>
 
-
 void Group::random_init(const size_t &n_points) {
-    points.resize(n_points);
-    random_device rand;
-    default_random_engine engine(rand());
+    using namespace chrono;
+    // counter makes sure, that generated output is pseudo random even if function is called two times between period of
+    // time that is too short for high_resolution_clock
+    static uint32_t counter(0);
+
+    // pseudo random generator
+    default_random_engine generator(high_resolution_clock::to_time_t(high_resolution_clock::now()) + (counter++));
+    // distributions
     uniform_int_distribution<uint32_t> dist_x(point_radius_range, points_scope.x - point_radius_range);
     uniform_int_distribution<uint32_t> dist_y(point_radius_range, points_scope.y - point_radius_range);
-    for (auto& point: points) {
-        point.x = dist_x(rand);
-        point.y = dist_y(rand);
+
+    points.push_back(Point({dist_x(generator), dist_y(generator)}));
+    while (points.size() < n_points) {
+        Point new_point = Point({dist_x(generator), dist_y(generator)});
+        bool collision = false;
+        for (auto& point : points) {
+            auto dx = point.x-new_point.x;
+            auto dy = point.y-new_point.y;
+            auto distance = 2*point_radius_range;
+            // pow doesn't work here idk why
+            if (dx*dx+dy*dy<=distance*distance) {
+                collision = true;
+                break;
+            }
+        }
+        if (not collision) points.push_back(new_point);
     }
+    rearrange();
 }
 
 void Group::rearrange() {

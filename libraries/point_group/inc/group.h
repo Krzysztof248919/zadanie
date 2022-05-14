@@ -13,8 +13,6 @@ using namespace std;
 
 class Group {
 private:
-    uint32_t point_radius_range;    // circular range of points in group
-    Point points_scope;             // acceptable scope of point coordinates [0,0] to it (+2R)
     vector<Point> points;           // group of points, in x based order
 
     bool in_range(const Point& point, vector<Point>::iterator center) const;
@@ -25,13 +23,17 @@ public:
     Group(Group&) = default;
     ~Group() = default;
 
-//    vector<Point>::iterator points_begin() { return points.begin(); }
-//    vector<Point>::iterator points_end() { return points.end(); }
-//    size_t size() { return points.size(); }
+    uint32_t point_radius_range;    // circular range of points in group
+    Point points_scope;             // acceptable scope of point coordinates [0,0] to it (+2R)
+
+    vector<Point>::iterator points_begin() { return points.begin(); }
+    vector<Point>::iterator points_end() { return points.end(); }
 
     void random_init(const size_t& n_points = 10);            // initialize Group with n random points
     void add_point(const Point& point);                       // add new point, rearrange
     void remove_point(vector<Point>::iterator point_iter);    // remove point, rearrange
+    void clear() { points.clear(); }
+    size_t size() const { return points.size(); }
 
     void move(vector<Point>::iterator point_iter, const Point& destination);
     void rescale(const Point& new_scope);

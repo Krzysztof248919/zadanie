@@ -59,7 +59,7 @@ TEST_SUITE_END;
 
 TEST_SUITE_BEGIN("group class tests");
 /// friend class to bypass encapsulation
-class Group_Test: public Group {
+class Group_Test {
 public:
 
     TEST_CASE_CLASS("default init") {
@@ -112,6 +112,17 @@ public:
                     CHECK_FALSE(failure);
                 }
             }
+            SUBCASE("different outputs") {
+                Group group1(10, {200, 200});
+                group1.random_init(10);
+                Group group2(10, {200, 200});
+                group2.random_init(10);
+                bool failure(false);
+                for (size_t i(0); i < 10; ++i) {
+                    if (group1.points[i] == group2.points[i]) failure = true;
+                }
+                CHECK_FALSE(failure);
+           }
         }
         SUBCASE("rearrange") {
             Group group(5, {100, 100});
@@ -183,6 +194,17 @@ public:
                 group.points = {{10, 55}, {20, 45}, {30, 15}, {40, 70}, {50, 45}};
                 CHECK(group.find_in_range({80,50}) == group.points.end());
             }
+        }
+        SUBCASE("size") {
+            Group group(5, {100, 100});
+            group.points = {{10, 55}, {20, 45}, {30, 15}, {40, 70}, {50, 45}};
+            CHECK(group.size() == 5);
+        }
+        SUBCASE("clear") {
+            Group group(5, {100, 100});
+            group.points = {{10, 55}, {20, 45}, {30, 15}, {40, 70}, {50, 45}};
+            group.clear();
+            CHECK(group.points.size() == 0);
         }
     }
     TEST_CASE_CLASS("exception handling") {
