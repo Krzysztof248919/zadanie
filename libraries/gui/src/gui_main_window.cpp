@@ -7,7 +7,7 @@
 Button::Button(const QString &text, QWidget *parent)
         : QToolButton(parent)
 {
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setText(text);
 }
 QSize Button::sizeHint() const
@@ -19,19 +19,23 @@ QSize Button::sizeHint() const
 }
 
 MainWindow::MainWindow(Group* group_, QWidget *parent): graph(group_, this), QWidget(parent) {
-    clearButton = createButton(tr("Clear"), SLOT(clearClicked()));
-    closeButton = createButton(tr("Close"), SLOT(closeClicked()));
-    auto *mainLayout = new QGridLayout;
-
-    mainLayout->addWidget(clearButton, 2, 0, Qt::AlignRight);
-    mainLayout->addWidget(closeButton, 2, 1, Qt::AlignRight);
-
-    mainLayout->addWidget(&graph, 1, 0);
-
     point_counterLabel = new QLabel;
     point_counterLabel->setText("Number of points: ");
     point_counterLabel->setAlignment(Qt::AlignLeft);
-    mainLayout->addWidget(point_counterLabel, 0, 0);
+    point_counterLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    clearButton = createButton(tr("Clear"), SLOT(clearClicked()));
+    closeButton = createButton(tr("Close"), SLOT(closeClicked()));
+
+    auto *mainLayout = new QVBoxLayout;
+    auto *bottomLayout = new QHBoxLayout;
+    bottomLayout->setAlignment(Qt::AlignRight);
+
+    bottomLayout->addWidget(clearButton);
+    bottomLayout->addWidget(closeButton);
+
+    mainLayout->addWidget(point_counterLabel);
+    mainLayout->addWidget(&graph);
+    mainLayout->addLayout(bottomLayout);
 
     setLayout(mainLayout);
     setWindowTitle(tr("Points"));
