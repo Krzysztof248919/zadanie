@@ -51,3 +51,17 @@ void Graph::resizeEvent(QResizeEvent *event) {
 void Graph::clear() {
     group->clear();
 }
+
+void Graph::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton) {
+        if (group->find_in_range(Point({uint32_t(event->x()), uint32_t(event->y())})) == group->points_end()) {
+            group->add_point(Point({uint32_t(event->x()), uint32_t(event->y())}));
+            update();
+        }
+    }
+    if (event->button() == Qt::RightButton) {
+        group->remove_point(group->find_in_range(Point({uint32_t(event->x()), uint32_t(event->y())})));
+        update();
+    }
+
+}

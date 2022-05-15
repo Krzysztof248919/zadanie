@@ -16,6 +16,7 @@ public:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 private:
     void paint(QPainter *painter, QPaintEvent *event);
     Group* group;
