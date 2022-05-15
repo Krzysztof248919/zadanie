@@ -4,23 +4,22 @@
 
 #include "gui_main_window.h"
 
+
 Button::Button(const QString &text, QWidget *parent)
         : QToolButton(parent)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setText(text);
 }
-QSize Button::sizeHint() const
-{
+QSize Button::sizeHint() const {
     QSize size = QToolButton::sizeHint();
     size.rheight() += 20;
     size.rwidth() = qMax(size.width(), size.height());
     return size;
 }
 
-MainWindow::MainWindow(Group* group_, QWidget *parent): graph(group_, this), QWidget(parent) {
+MainWindow::MainWindow(Group* group_, QWidget *parent): group(group_), graph(group_, this), QWidget(parent) {
     point_counterLabel = new QLabel;
-    point_counterLabel->setText("Number of points: ");
     point_counterLabel->setAlignment(Qt::AlignLeft);
     point_counterLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     clearButton = createButton(tr("Clear"), SLOT(clearClicked()));
@@ -54,4 +53,11 @@ Button *MainWindow::createButton(const QString &text, const char *member) {
     auto *button = new Button(text);
     connect(button, SIGNAL(clicked()), this, member);
     return button;
+}
+
+void MainWindow::paintEvent(QPaintEvent *event) {
+    QString qstr("Number of points: ");
+    qstr += to_string(group->size()).c_str();
+    point_counterLabel->setText(qstr);
+//    QWidget::paintEvent(event); // ?
 }

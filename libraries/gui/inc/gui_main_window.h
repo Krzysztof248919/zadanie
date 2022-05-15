@@ -21,11 +21,14 @@ class MainWindow : public QWidget {
     Q_OBJECT
 public:
     MainWindow(Group* group_, QWidget *parent = nullptr);
+protected:
+    void paintEvent(QPaintEvent *event) override;
 private slots:
     void closeClicked();
     void clearClicked();
 private:
     // unique pointers?
+    Group* group;
     Button *createButton(const QString &text, const char *member);
     QLabel *point_counterLabel;
     Graph graph;
