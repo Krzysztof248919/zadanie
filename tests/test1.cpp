@@ -156,15 +156,30 @@ public:
             CHECK(group.points == expected);
         }
         SUBCASE("rescale") {
-            Group group(5, {100, 100});
-            group.points = {{10, 55}, {20, 45}, {30, 15}, {40, 70}, {50, 45}};
-            Point new_scope({200, 200});
-            group.rescale(new_scope);
-            vector<Point> expected = {
-                    {20, 110}, {40, 90}, {60, 30}, {80, 140}, {100, 90}
-            };
-            CHECK(group.points == expected);
-            CHECK(group.points_scope == new_scope);
+            SUBCASE("enlarge") {
+                Group group(5, {100, 100});
+                group.points = {{10, 55}, {20, 45}, {30, 15}, {40, 70}, {50, 45}};
+                group.update_relative_positions(); /// !!!
+                Point new_scope({200, 200});
+                group.rescale(new_scope);
+                vector<Point> expected = {
+                        {20, 110}, {40, 90}, {60, 30}, {80, 140}, {100, 90}
+                };
+                CHECK(group.points == expected);
+                CHECK(group.points_scope == new_scope);
+            }
+            SUBCASE("shrink") {
+                Group group(5, {200, 200});
+                group.points = {{10, 20}, {20, 40}, {30, 60}, {40, 80}, {50, 100}};
+                group.update_relative_positions(); /// !!!
+                Point new_scope({100, 100});
+                group.rescale(new_scope);
+                vector<Point> expected = {
+                        {5, 10}, {10, 20}, {15, 30}, {20, 40}, {25, 50}
+                };
+                CHECK(group.points == expected);
+                CHECK(group.points_scope == new_scope);
+            }
         }
         SUBCASE("in_range") {
             SUBCASE("inside") {

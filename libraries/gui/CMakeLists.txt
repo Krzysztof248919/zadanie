@@ -1,4 +1,4 @@
-add_library(gui src/gui.cpp inc/gui.h)
+add_library(gui src/gui_graph.cpp inc/gui_graph.h src/gui_main_window.cpp inc/gui_main_window.h)
 
 target_include_directories(gui PUBLIC inc/)
 

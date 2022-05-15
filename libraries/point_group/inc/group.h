@@ -17,6 +17,9 @@ private:
 
     bool in_range(const Point& point, vector<Point>::iterator center) const;
     void rearrange();
+    void update_relative_position(vector<Point>::iterator point_iter);
+    void update_relative_positions();
+
 public:
     Group(): point_radius_range(10), points_scope({200, 200}) {};
     Group(uint32_t r, Point scope): point_radius_range(r), points_scope(scope) {};

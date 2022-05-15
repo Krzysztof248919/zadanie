@@ -8,10 +8,16 @@
 #include <chrono>
 #include <algorithm>
 
+#include <iostream>
+
+class TimeOutError : public std::runtime_error
+{
+public:
+    TimeOutError(const char* what) : runtime_error(what) {}
+};
+
 void Group::random_init(const size_t &n_points) {
-    auto sqr = [](auto val) {
-        return val*val;
-    };
+    auto sqr = [](auto val) {return val*val;};
 
     if ((points_scope.x*points_scope.y)/(sqr(point_radius_range)) < n_points)
         throw domain_error("Not enough space for non-overlapping points");
@@ -27,6 +33,9 @@ void Group::random_init(const size_t &n_points) {
     uniform_int_distribution<uint32_t> dist_x(point_radius_range, points_scope.x - point_radius_range);
     uniform_int_distribution<uint32_t> dist_y(point_radius_range, points_scope.y - point_radius_range);
 
+    auto start = high_resolution_clock::now();
+    const uint32_t timeout_ms(1000);
+
     points.push_back(Point({dist_x(generator), dist_y(generator)}));
     while (points.size() < n_points) {
         Point new_point = Point({dist_x(generator), dist_y(generator)});
@@ -38,8 +47,12 @@ void Group::random_init(const size_t &n_points) {
                 break;
             }
         }
-        if (not collision) points.push_back(new_point);
+        if (not collision)
+            points.push_back(new_point);
+        if (duration_cast<milliseconds>(high_resolution_clock::now() - start).count() > timeout_ms)
+            throw TimeOutError("Initialization maximum time exceeded.");
     }
+    update_relative_positions();
     rearrange();
 }
 
@@ -47,6 +60,17 @@ void Group::rearrange() {
     sort(points.begin(), points.end(), [](const Point& a, const Point& b)->bool {
         return a.x < b.x;
     });
+}
+
+void Group::update_relative_position(vector<Point>::iterator point_iter) {
+    point_iter->relative_x = double(point_iter->x) / double (points_scope.x);
+    point_iter->relative_y = double(point_iter->y) / double (points_scope.y);
+}
+
+void Group::update_relative_positions() {
+    for (auto iter = points.begin(); iter < points.end(); ++iter) {
+        update_relative_position(iter);
+    }
 }
 
 void Group::add_point(const Point &point) {
@@ -70,20 +94,16 @@ void Group::move(const vector<Point>::iterator point_iter, const Point &destinat
 }
 
 void Group::rescale(const Point &new_scope) {
-    const array<double, 2> scale_vec({
-        static_cast<double>(new_scope.x / points_scope.x),
-        static_cast<double>(new_scope.y / points_scope.y)
-    });
-    for (auto& point : points) {
-        point *= scale_vec;
-    }
     points_scope = new_scope;
+    for (auto &point: points) {
+        point.x = point.relative_x*points_scope.x;
+        point.y = point.relative_y*points_scope.y;
+        cout << point.x << " " << point.y << endl;
+    }
 }
 
 bool Group::in_range(const Point &point, vector<Point>::iterator center) const {
-    auto sqr = [](auto val) {
-        return val*val;
-    };
+    auto sqr = [](auto val) {return val*val;};
     return sqr(point.x - center->x) + sqr(point.y - center->y) <= sqr(point_radius_range);
 }
 
