@@ -13,12 +13,19 @@ background(Qt::black), circleBrush(Qt::darkGray), circlePen(Qt::white, 0) {
 }
 
 void Graph::paint(QPainter *painter, QPaintEvent *event) {
+    // draw background
     painter->fillRect(event->rect(), background);
     painter->setBrush(circleBrush);
-    painter->setPen(circlePen);
-    painter->save();
 
-    painter->restore();
+    // draw lines
+    painter->setPen(linePen);
+    for(auto point_it = group->points_begin(); point_it < group->points_end()-1; ++point_it) {
+        painter->save();
+        painter->drawLine(point_it->x, point_it->y, (point_it+1)->x, (point_it+1)->y);
+        painter->restore();
+    }
+    // draw circles
+    painter->setPen(circlePen);
     for(auto point_it = group->points_begin(); point_it < group->points_end(); ++point_it) {
         painter->save();
         painter->drawEllipse(point_it->x-group->point_radius_range, point_it->y-group->point_radius_range,

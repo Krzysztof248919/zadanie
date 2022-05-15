@@ -98,7 +98,6 @@ void Group::rescale(const Point &new_scope) {
     for (auto &point: points) {
         point.x = point.relative_x*points_scope.x;
         point.y = point.relative_y*points_scope.y;
-        cout << point.x << " " << point.y << endl;
     }
 }
 

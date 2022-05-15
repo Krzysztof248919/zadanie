@@ -21,4 +21,5 @@ private:
     QBrush background = QBrush(Qt::black);
     QBrush circleBrush = QBrush(Qt::darkGray);
     QPen circlePen = QPen(Qt::white, 0);
+    QPen linePen = QPen(Qt::green, 0);
 };
