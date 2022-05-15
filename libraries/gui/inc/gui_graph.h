@@ -12,6 +12,7 @@ class Graph : public QWidget {
     Q_OBJECT
 public:
     Graph(Group* group_, QWidget *parent = nullptr);
+    void clear();
 protected:
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;

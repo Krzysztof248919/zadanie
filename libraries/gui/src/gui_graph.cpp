@@ -47,3 +47,7 @@ void Graph::resizeEvent(QResizeEvent *event) {
     uint32_t new_scope_y = event->size().height();
     group->rescale({new_scope_x, new_scope_y});
 }
+
+void Graph::clear() {
+    group->clear();
+}
