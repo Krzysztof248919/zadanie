@@ -52,9 +52,9 @@ void Group::update_relative_position(Point &point) {
 }
 
 void Group::add_point(Point point) {
-    if (point.x < point_radius_range and point.x > (points_scope.x - point_radius_range))
+    if (point.x < point_radius_range or point.x > (points_scope.x - point_radius_range))
         throw domain_error("Point out of scope");
-    if (point.y < point_radius_range and point.y > (points_scope.y - point_radius_range))
+    if (point.y < point_radius_range or point.y > (points_scope.y - point_radius_range))
         throw domain_error("Point out of scope");
     update_relative_position(point);
     points.insert(upper_bound(points.begin(), points.end(), point,
