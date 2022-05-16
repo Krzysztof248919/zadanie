@@ -17,8 +17,7 @@ bool Group::in_scope(const Point &point) const {
     return true;
 }
 
-class TimeOutError : public std::runtime_error
-{
+class TimeOutError : public std::runtime_error {
 public:
     TimeOutError(const char* what) : runtime_error(what) {}
 };
