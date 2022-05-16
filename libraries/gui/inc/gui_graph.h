@@ -17,8 +17,11 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 private:
     void paint(QPainter *painter, QPaintEvent *event);
+    vector<Point>::iterator left_clicked_point;
     Group* group;
     QBrush background = QBrush(Qt::black);
     QBrush circleBrush = QBrush(Qt::darkGray);

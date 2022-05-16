@@ -9,6 +9,13 @@
 #include <algorithm>
 #include <stdexcept>
 
+bool Group::in_scope(const Point &point) const {
+    if (point.x < point_radius_range or point.x > (points_scope.x - point_radius_range))
+        return false;
+    if (point.y < point_radius_range or point.y > (points_scope.y - point_radius_range))
+        return false;
+    return true;
+}
 
 class TimeOutError : public std::runtime_error
 {
@@ -52,9 +59,7 @@ void Group::update_relative_position(Point &point) {
 }
 
 void Group::add_point(Point point) {
-    if (point.x < point_radius_range or point.x > (points_scope.x - point_radius_range))
-        throw domain_error("Point out of scope");
-    if (point.y < point_radius_range or point.y > (points_scope.y - point_radius_range))
+    if (not in_scope(point))
         throw domain_error("Point out of scope");
     update_relative_position(point);
     points.insert(upper_bound(points.begin(), points.end(), point,
@@ -66,7 +71,7 @@ void Group::remove_point(const vector<Point>::iterator point_iter) {
 }
 
 void Group::move(const vector<Point>::iterator point_iter, Point destination) {
-    if (not (destination.x <= points_scope.x and destination.y <= points_scope.y))
+    if (not in_scope(destination))
         throw domain_error("Point destination out of scope");
     update_relative_position(destination);
     remove_point(point_iter);
@@ -87,7 +92,7 @@ bool Group::in_range(const Point &point, vector<Point>::iterator center) const {
 }
 
 vector<Point>::iterator Group::find_in_range(const Point &point) {
-    if (not (point.x <= points_scope.x and point.y <= points_scope.y))
+    if (not in_scope(point))
         throw domain_error("Point out of scope");
     auto iter = points.begin();
     while (iter < points.end()) {
@@ -103,11 +108,23 @@ bool Group::in_extended_range(const Point &point, vector<Point>::iterator center
 }
 
 vector<Point>::iterator Group::find_in_extended_range(const Point &point) {
-    if (not (point.x <= points_scope.x and point.y <= points_scope.y))
+    if (not in_scope(point))
         throw domain_error("Point out of scope");
     auto iter = points.begin();
     while (iter < points.end()) {
         if (in_extended_range(point, iter)) break;
+        ++iter;
+    }
+    return iter;
+}
+
+vector<Point>::iterator Group::find_in_extended_range(const Point &point, vector<Point>::iterator exclude_iter) {
+    if (not in_scope(point))
+        throw domain_error("Point out of scope");
+    auto iter = points.begin();
+    while (iter < points.end()) {
+        if (iter != exclude_iter and in_extended_range(point, iter))
+            break;
         ++iter;
     }
     return iter;

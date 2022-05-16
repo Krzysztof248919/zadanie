@@ -3,8 +3,10 @@
 //
 #include "gui_graph.h"
 
-Graph::Graph(Group *group_, QWidget *parent): QWidget(parent), group(group_),
-background(Qt::black), circleBrush(Qt::darkGray), circlePen(Qt::white, 0) {
+//#include <iostream> // for debug
+
+Graph::Graph(Group *group_, QWidget *parent): QWidget(parent), group(group_), left_clicked_point(group_->points_end()),
+                                              background(Qt::black), circleBrush(Qt::darkGray), circlePen(Qt::white, 0) {
     setMinimumSize(200, 200);
     setSizeIncrement(50, 50);
     resize(200, 200);
@@ -51,11 +53,14 @@ void Graph::clear() {
 }
 
 void Graph::mousePressEvent(QMouseEvent *event) {
+//    cout << __func__ << endl; // for debug (event tracking)
     if (event->button() == Qt::LeftButton) {
         if (group->find_in_extended_range(Point(event->x(), event->y())) == group->points_end()) {
+            // outside of point
             group->add_point(Point({uint32_t(event->x()), uint32_t(event->y())}));
             update();
         }
+        left_clicked_point = group->find_in_range(Point(event->x(), event->y()));
     }
     if (event->button() == Qt::RightButton) {
         auto iter = group->find_in_range(Point(event->x(), event->y()));
@@ -65,4 +70,29 @@ void Graph::mousePressEvent(QMouseEvent *event) {
         }
     }
 
+}
+
+void Graph::mouseMoveEvent(QMouseEvent *event) {
+//    cout << __func__ << endl; // for debug (event tracking)
+    if (left_clicked_point != group->points_end()) {
+        auto event_point = Point(event->x(), event->y());
+        if (group->in_scope(event_point)) {
+            auto found_point_iter = group->find_in_extended_range(event_point, left_clicked_point);
+            if (found_point_iter == group->points_end()) {
+                // if not in extended range of ant point beside itself
+                group->move(left_clicked_point, event_point);
+                // update left_clicked_point after rearrangement
+                left_clicked_point = group->find_in_range(event_point);
+                update();
+            }
+        }
+
+    }
+}
+
+void Graph::mouseReleaseEvent(QMouseEvent *event) {
+//    cout << __func__ << endl; // for debug (event tracking)
+    if (event->button() == Qt::LeftButton) {
+        left_clicked_point = group->points_end();
+    }
 }

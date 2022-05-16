@@ -31,6 +31,7 @@ public:
     vector<Point>::iterator points_begin() { return points.begin(); }
     vector<Point>::iterator points_end() { return points.end(); }
     [[nodiscard]] size_t size() const { return points.size(); }
+    bool in_scope(const Point& point) const;
     void clear() { points.clear(); }
 
     void random_init(const size_t& n_points = 10);              // initialize Group with n random points
@@ -41,6 +42,7 @@ public:
 
     vector<Point>::iterator find_in_range(const Point& point);
     vector<Point>::iterator find_in_extended_range(const Point &point);
+    vector<Point>::iterator find_in_extended_range(const Point &point, vector<Point>::iterator exclude_iter);
 
     friend class Group_Test;
 };
