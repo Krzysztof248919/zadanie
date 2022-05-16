@@ -5,7 +5,7 @@
 #pragma once
 
 #include <cstdint>
-#include <array>
+
 using namespace std;
 
 class Point {
@@ -20,8 +20,7 @@ public:
     friend class Point_Test;
 };
 
-
-
-Point operator * (const array<double, 2>& vec, const Point& point);
-Point& operator *= (Point& point, const array<double, 2>& vec);
-bool operator == (const Point& point_l, const Point& point_r);
+inline
+bool operator == (const Point& point_l, const Point& point_r) {
+    return point_l.x == point_r.x and point_l.y == point_r.y;
+}

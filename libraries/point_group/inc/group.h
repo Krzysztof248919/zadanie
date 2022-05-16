@@ -15,10 +15,9 @@ class Group {
 private:
     vector<Point> points;           // group of points, in x based order
 
-    bool in_range(const Point& point, vector<Point>::iterator center) const;
-    void rearrange();
-    void update_relative_position(vector<Point>::iterator point_iter);
-    void update_relative_positions();
+    [[nodiscard]] bool in_range(const Point& point, vector<Point>::iterator center) const;
+    [[nodiscard]] bool in_extended_range(const Point& point, vector<Point>::iterator center) const;
+    void update_relative_position(Point& point);
 
 public:
     Group(): point_radius_range(10), points_scope({200, 200}) {};
@@ -26,22 +25,22 @@ public:
     Group(Group&) = default;
     ~Group() = default;
 
-    uint32_t point_radius_range;    // circular range of points in group
-    Point points_scope;             // acceptable scope of point coordinates [0,0] to it (+2R)
+    uint32_t point_radius_range;    // radius of point representation
+    Point points_scope;             // acceptable scope of point representation
 
     vector<Point>::iterator points_begin() { return points.begin(); }
     vector<Point>::iterator points_end() { return points.end(); }
-
-    void random_init(const size_t& n_points = 10);            // initialize Group with n random points
-    void add_point(const Point& point);                       // add new point, rearrange
-    void remove_point(vector<Point>::iterator point_iter);    // remove point, rearrange
+    [[nodiscard]] size_t size() const { return points.size(); }
     void clear() { points.clear(); }
-    size_t size() const { return points.size(); }
 
-    void move(vector<Point>::iterator point_iter, const Point& destination);
+    void random_init(const size_t& n_points = 10);              // initialize Group with n random points
+    void add_point(Point point);                                // add new point, rearrange
+    void remove_point(vector<Point>::iterator point_iter);      // remove point, rearrange
+    void move(vector<Point>::iterator point_iter, Point destination);
     void rescale(const Point& new_scope);
 
     vector<Point>::iterator find_in_range(const Point& point);
+    vector<Point>::iterator find_in_extended_range(const Point &point);
 
     friend class Group_Test;
 };

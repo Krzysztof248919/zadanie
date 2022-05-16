@@ -3,8 +3,6 @@
 //
 #include "gui_graph.h"
 
-#include <iostream>
-
 Graph::Graph(Group *group_, QWidget *parent): QWidget(parent), group(group_),
 background(Qt::black), circleBrush(Qt::darkGray), circlePen(Qt::white, 0) {
     setMinimumSize(200, 200);
@@ -54,14 +52,17 @@ void Graph::clear() {
 
 void Graph::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
-        if (group->find_in_range(Point({uint32_t(event->x()), uint32_t(event->y())})) == group->points_end()) {
+        if (group->find_in_extended_range(Point(event->x(), event->y())) == group->points_end()) {
             group->add_point(Point({uint32_t(event->x()), uint32_t(event->y())}));
             update();
         }
     }
     if (event->button() == Qt::RightButton) {
-        group->remove_point(group->find_in_range(Point({uint32_t(event->x()), uint32_t(event->y())})));
-        update();
+        auto iter = group->find_in_range(Point(event->x(), event->y()));
+        if (iter != group->points_end()) {
+            group->remove_point(iter);
+            update();
+        }
     }
 
 }
