@@ -30,12 +30,9 @@ void Group::random_init(const size_t &n_points) {
         throw domain_error("Not enough space for non-overlapping points");
 
     using namespace chrono;
-    // counter makes sure, that generated output is pseudo random even if function is called two times between period of
-    // time that is too short for high_resolution_clock
-    static uint32_t counter(0);
 
     // pseudo random generator
-    default_random_engine generator(high_resolution_clock::to_time_t(high_resolution_clock::now()) + (counter++));
+    static default_random_engine generator(high_resolution_clock::to_time_t(high_resolution_clock::now()));
     // distributions
     uniform_int_distribution<uint32_t> dist_x(point_radius_range, points_scope.x - point_radius_range);
     uniform_int_distribution<uint32_t> dist_y(point_radius_range, points_scope.y - point_radius_range);
